@@ -19,7 +19,7 @@ int task1_max (const std::string &filename)
                 max_v = a;
                 cnt = 1;
             }
-            else if (a == max_v)
+            else if (std::fabs (a - max_v) < std::numeric_limits<double>::epsilon())
                 ++cnt;
         }
     }
@@ -39,41 +39,30 @@ int task1 (const std::string &filename)
     {
         while (std::getline (myfile, line))
         {
-            size_t begin_ind = 0, end_ind = 0;
-            bool is_inside_num = false; ///< 134a21345 8935e9858u 12.5
-            for (size_t i = 0; i < line.length(); i++)
-                if (std::isdigit (line[i]) && i != (line.length () - 1))
-                {
-                    if (!is_inside_num)
-                    {
-                        is_inside_num = true;
-                        begin_ind = i;
-                    }
+            while (!line.empty())
+            {
+                size_t sz = 0;
+                double val = 0;
+                bool ok = true;
+                try {
+                    val = std::stod (line, &sz);
+                } catch (std::exception& ) {
+                    ok = false;
                 }
-                else
-                {
-                    if (!std::isspace(line[i]) && !std::isdigit (line[i]))
-                        return -2;
 
-                    if (is_inside_num)
-                    {
-                        is_inside_num = false;
-                        end_ind = i + ((std::isdigit (line[i])) ? 1 : 0);
-                        size_t sz = 0;
-                        std::string num_str (line, begin_ind, end_ind - begin_ind);
-                        double val = std::stod (num_str, &sz);
-                        if (sz > 0)
-                        {
-                            if (std::fabs(val - max_val) < std::numeric_limits<double>::epsilon())
-                                ++cnt;
-                            else if (val > max_val)
-                            {
-                                max_val = val;
-                                cnt = 1;
-                            }
-                        }
-                    }
+                if (!ok)
+                    break;
+
+                if (std::fabs(val - max_val) < std::numeric_limits<double>::epsilon())
+                    ++cnt;
+                else if (val > max_val)
+                {
+                    max_val = val;
+                    cnt = 1;
                 }
+
+                line.erase (0, sz);
+            }
         }
         return cnt;
     }
