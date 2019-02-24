@@ -45,64 +45,65 @@ std::list<double> read_nums_from_file (const std::string& filename)
 
 int task2_impl (const std::list<double>& nums)
 {
-    if (nums.empty())
-        return 0;
 
+    if (nums.empty() || (++nums.begin()) == nums.end())
+        return 0;
     bool have_max = false;
     int cnt = 0;
-    int how_many_max=0;
+    int i=0;
+ int how_many_times =0;
     double max_val = *nums.begin();
     for (const double & number: nums)
     {
+        i++;
         if (number>max_val )
         {
             if (!have_max)
             {
                 ++cnt;
-                ++how_many_max;
+
                 max_val = number;
                 have_max = true;
+                how_many_times=0;
             }
             else
-                max_val = number;
-            ++how_many_max;
+               { max_val = number;
+                how_many_times=0;}
+
         }
         else
         {
-            if ((cnt  != 0) && (cnt != 1))
-            {
-                have_max = false;
-                max_val = number;
-                how_many_max =0;
-            }
-            else {
-                if (cnt==1 )
-                {
-                    if ((how_many_max==1)&&(number<max_val))
-                    {
-                        have_max = false;
-                        max_val = number;
-                        how_many_max=0;
-                    }
-                    else if ((how_many_max>1)&&(number<max_val))
-                    {
-                        have_max = false;
-                        max_val = number;
-                        how_many_max=0;  }
-                }
-                else if ((cnt == 0)&&(how_many_max ==0))
-                {
-                    have_max = true;
-                    max_val = number;
-                    ++cnt;
-                    ++how_many_max;
-                }
-            }
+           if (number<max_val)
+           {
+               if (!have_max)
+               { if (how_many_times==0)
+                  { ++cnt;
 
-            }
-        }
+                   max_val = number;
+                   have_max = true;
+                   ++how_many_times;}
+                   else {
+                       ++how_many_times;
+                       max_val = number;
+                   }
+
+               }
+               else
+               { max_val = number;
+                       have_max =false;
+                   ++how_many_times;}
+
+
+                   }
+           }
+
+           }
+
+
+
+
         return cnt;
-}
+    }
 
 int task2_impl_by_ma (const std::list<double>& nums)
 {
@@ -165,14 +166,14 @@ void test ()
 {
     std::vector<std::pair<std::list<double>, int>> test_data = {
         {{}, 0},
-        {{1,1,1,1,1,1,1,1}, 0},
-        {{1,2,1},1},
-        {{1}, 0},
+       {{1,1,1,1}, 0},
+      {{1,2,1},1},
+      {{1}, 0},
         {{1,2,3,4,5,6,7,8,9,123}, 1},
-        {{123,9,8,7,6,5,4,3,2,1,0}, 1},
+       {{123,9,8,7,6,5,4,3,2,1,0}, 1},
         {{1,1,1,1,1,2,2,2,2,2,3,3,3,3,3,2,2,2,2,2,2,1}, 1},
-        {{1,1,2,2,1,1,0,0,0,0,0,0,0,0,456,456,456,456,456,456,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1},2},
-        {{2,2,2,2,2,2,2,1}, 1}
+      {{1,1,2,2,1,1,0,0,0,0,0,0,0,0,456,456,456,456,456,456,3,3,3,3,3,3,3,3,3,3,3,1,1,1,1,1},2},
+       {{2,2,2,2,2,2,2,1}, 1}
     };
 
     for (const auto& data : test_data)
